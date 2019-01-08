@@ -4,10 +4,10 @@ services:
   - docker
 
 before_install:
-  - docker build -t nikolakp/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t nikolakp/docker-react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run nikolakp/docker-react npm run test -- --coverage
+  - docker run nikolakp/docker-react-test npm run test -- --coverage
 
 after_success:
   - docker build -t nikolakp/multi-client -f ./client/Dockerfile ./client
