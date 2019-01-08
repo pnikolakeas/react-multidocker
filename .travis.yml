@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t nikolakp/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run nikolakp/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t nikolakp/multi-client -f ./client/Dockerfile ./client
+  - docker build -t nikolakp/multi-nginx  -f ./server/Dockerfile ./nginx
+  - docker build -t nikolakp/multi-server -f ./server/Dockerfile ./server
+  - docker build -t nikolakp/multi-worker -f ./worker/Dockerfile ./worker
+
+  # Log in to the docker CLI
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+- docker push nikolakp/multi-client
+- docker push nikolakp/multi-nginx
+- docker push nikolakp/multi-server
+- docker push nikolakp/multi-worker
